@@ -1,7 +1,6 @@
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import {
-  fireEvent,
   render,
   screen,
   waitForElementToBeRemoved,
@@ -110,9 +109,14 @@ describe("<Home />", () => {
       screen.queryByRole("button", { name: /load more posts/i }),
     ).not.toBeInTheDocument();
 
+    // Search for post inexistent
+
+    userEvent.type(search, "post does not exist");
+    expect(screen.getByText("Não existem Posts")).toBeInTheDocument();
+
     // Remove the search.
 
-    fireEvent.change(search, { target: { value: "" } });
+    userEvent.clear(search);
     expect(
       screen.getByRole("heading", { name: "title 1" }),
     ).toBeInTheDocument();
