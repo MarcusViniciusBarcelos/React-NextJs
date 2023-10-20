@@ -1,27 +1,30 @@
-export const env = {
-  browser: true,
-  es2021: true,
-  jest: true,
-};
-export const extendsArr = [
-  "eslint:recommended",
-  "plugin:react/recommended",
-  "plugin:react-hooks/recommended",
-  "plugin:prettier/recommended",
-];
-export const parserOptions = {
-  ecmaFeatures: {
-    jsx: true,
+/* eslint-disable no-undef */
+module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+    jest: true,
   },
-  ecmaVersion: 12,
-  sourceType: "module",
-};
-export const plugins = ["react"];
-export const settings = {
-  react: {
-    version: "detect",
+  extends: [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended",
+  ],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 12,
+    sourceType: "module",
   },
-};
-export const rules = {
-  "react/react-in-jsx-scope": "off",
+  plugins: ["react"],
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
+  rules: {
+    "react/react-in-jsx-scope": "off",
+  },
 };
