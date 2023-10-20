@@ -28,6 +28,9 @@ describe('<Post />', () => {
   it('should render Post correctly', () => {
     render(<Posts {...props}/>);
     expect(screen.getAllByRole('heading', {name: /title/i})).toHaveLength(3);
+    expect(screen.getAllByRole('img', {name: /title/i})).toHaveLength(3);
+    expect(screen.getAllByText(/body/i)).toHaveLength(3);
+    expect(screen.getByRole('img', {name: /title 3/i}).src).toContain('img3.png');
   });
 
   it('should match snapshot', () => {
