@@ -7,6 +7,7 @@ import {
   waitForElementToBeRemoved,
 } from "@testing-library/react";
 import { Home } from ".";
+import userEvent from "@testing-library/user-event";
 
 const handlers = [
   rest.get("*jsonplaceholder.typicode.com*", async (req, res, ctx) => {
@@ -95,7 +96,7 @@ describe("<Home />", () => {
 
     // Search for post 1.
 
-    fireEvent.change(search, { target: { value: "title 1" } });
+    userEvent.type(search, "title 1");
     expect(
       screen.getByRole("heading", { name: "title 1" }),
     ).toBeInTheDocument();
