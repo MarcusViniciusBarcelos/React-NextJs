@@ -1,6 +1,7 @@
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import {
+  fireEvent,
   render,
   screen,
   waitForElementToBeRemoved,
@@ -66,5 +67,62 @@ describe("<Home />", () => {
     expect(search).toBeInTheDocument();
     expect(images).toHaveLength(2);
     expect(button).toBeInTheDocument();
+  });
+
+  it("should search for posts", async () => {
+    render(<Home />);
+
+    // Wait for the removal of the loading
+
+    const noMorePosts = screen.getByText("Não existem Posts");
+    await waitForElementToBeRemoved(noMorePosts);
+    const search = screen.getByPlaceholderText(/type your search/i);
+
+    // Wait for the loading of the posts.
+
+    expect(
+      screen.getByRole("heading", { name: "title 1" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "title 2" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "title 3" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /load more posts/i }),
+    ).toBeInTheDocument();
+
+    // Search for post 1.
+
+    fireEvent.change(search, { target: { value: "title 1" } });
+    expect(
+      screen.getByRole("heading", { name: "title 1" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "title 2" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "title 3" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /load more posts/i }),
+    ).not.toBeInTheDocument();
+
+    // Remove the search.
+
+    fireEvent.change(search, { target: { value: "" } });
+    expect(
+      screen.getByRole("heading", { name: "title 1" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "title 2" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "title 3" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /load more posts/i }),
+    ).toBeInTheDocument();
   });
 });
