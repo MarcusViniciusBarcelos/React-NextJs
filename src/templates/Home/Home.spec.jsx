@@ -7,6 +7,7 @@ import {
 } from "@testing-library/react";
 import { Home } from ".";
 import userEvent from "@testing-library/user-event";
+import { act } from "react-dom/test-utils";
 
 const handlers = [
   rest.get("*jsonplaceholder.typicode.com*", async (req, res, ctx) => {
@@ -32,6 +33,13 @@ const handlers = [
           title: "title 3",
           body: "body 3",
           url: "img/img3.png",
+        },
+        {
+          userId: 4,
+          id: 4,
+          title: "title 4",
+          body: "body 4",
+          url: "img/img4.png",
         },
       ]),
     );
@@ -95,7 +103,9 @@ describe("<Home />", () => {
 
     // Search for post 1.
 
-    userEvent.type(search, "title 1");
+    act(() => {
+      userEvent.type(search, "title 1");
+    });
     expect(
       screen.getByRole("heading", { name: "title 1" }),
     ).toBeInTheDocument();
@@ -111,12 +121,16 @@ describe("<Home />", () => {
 
     // Search for post inexistent
 
-    userEvent.type(search, "post does not exist");
+    act(() => {
+      userEvent.type(search, "post does not exist");
+    });
     expect(screen.getByText("Não existem Posts")).toBeInTheDocument();
 
     // Remove the search.
 
-    userEvent.clear(search);
+    act(() => {
+      userEvent.clear(search);
+    });
     expect(
       screen.getByRole("heading", { name: "title 1" }),
     ).toBeInTheDocument();
@@ -128,6 +142,30 @@ describe("<Home />", () => {
     ).not.toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /load more posts/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("should load more posts", async () => {
+    render(<Home />);
+
+    // Wait for the removal of the loading
+
+    const noMorePosts = screen.getByText("Não existem Posts");
+    await waitForElementToBeRemoved(noMorePosts);
+    const button = screen.getByRole("button", {
+      name: /load more posts/i,
+    });
+
+    // Load more posts.
+    act(() => {
+      userEvent.click(button);
+    });
+    expect(
+      screen.getByRole("heading", { name: "title 3" }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("heading", { name: "title 4" }),
     ).toBeInTheDocument();
   });
 });
